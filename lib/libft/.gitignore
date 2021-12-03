@@ -1,0 +1,10 @@
+*.out
+*.sh
+test
+.DS_Store
+.swp
+*.o
+.idea
+*.pdf
+*.so
+*.a
