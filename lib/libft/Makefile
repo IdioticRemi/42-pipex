@@ -15,7 +15,7 @@ SRC	= \
 	ft_toupper ft_tolower \
 	ft_strdup ft_calloc \
 	ft_atoi ft_itoa \
-	ft_pathjoin
+	ft_pathjoin ft_afree
 
 SRCS	= $(addsuffix .c, $(SRC))
 OBJS	= $(SRCS:.c=.o)
@@ -36,7 +36,7 @@ RM		= rm -f
 AR		= ar rc
 RN		= ranlib
 
-CFLAGS	= -Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra -g
 
 # FORMAT
 

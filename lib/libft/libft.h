@@ -6,7 +6,7 @@
 /*   By: tjolivea <tjolivea@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 13:13:25 by tjolivea          #+#    #+#             */
-/*   Updated: 2021/12/03 17:22:49 by tjolivea         ###   ########.fr       */
+/*   Updated: 2021/12/05 23:53:26 by tjolivea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ void	*ft_calloc(size_t nmemb, size_t size);
 
 // More?
 
-char	*ft_pathjoin (char *path, char *bin);
+void	ft_afree(char **arr);
+char	*ft_pathjoin(char *path, char *bin);
 char	*ft_substr(const char *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strtrim(char const *s1, char const *set);
