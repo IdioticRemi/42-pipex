@@ -6,7 +6,7 @@
 /*   By: tjolivea <tjolivea@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 15:50:54 by tjolivea          #+#    #+#             */
-/*   Updated: 2021/12/06 14:45:03 by tjolivea         ###   ########.fr       */
+/*   Updated: 2021/12/06 15:07:12 by tjolivea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,11 +110,13 @@ int	main(int argc, char **argv, char **env)
 	int	i;
 
 	if (argc != 5)
-		ft_exit("Usage: ./pipex file_in cmd1 cmd2 file_out.");
+		ft_exit("Usage: ./pipex file_in cmd_1 cmd_2 file_out.");
 	file_in = open(argv[1], O_RDONLY);
 	file_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_TRUNC, 0777);
-	if (file_in < 0 || file_out < 0)
-		ft_exit("Couldn't open file");
+	if (file_in < 0)
+		ft_exit("Couldn't open input file.");
+	if (file_out < 0)
+		ft_exit("Couldn't open output file.");
 	dup2(file_in, STDIN_FILENO);
 	dup2(file_out, STDOUT_FILENO);
 	i = 1;
