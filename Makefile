@@ -6,6 +6,11 @@ _SRC	= main.c
 SRCS	= $(addprefix src/, $(_SRC))
 OBJS	= $(SRCS:.c=.o)
 
+_BSRC	= bonus.c
+
+BSRCS	= $(addprefix src/, $(_BSRC))
+BOBJS	= $(BSRCS:.c=.o)
+
 # COMPILER
 CC		= clang-13
 CFLAGS	= -Wall -Wextra -Werror
@@ -17,9 +22,10 @@ LIBS	= -L ./lib/libft -lft
 %.o: %.c includes/$(NAME).h
 	$(CC) $(CFLAGS) $(INCL) -c $< -o $@
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(BOBJS)
 	@make -s -C ./lib/libft bonus
 	$(CC) $(CFLAGS) -o $(NAME) $(INCL) $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -o $(NAME)_bonus $(INCL) $(BOBJS) $(LIBS)
 
 all: $(NAME)
 
