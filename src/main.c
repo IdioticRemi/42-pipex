@@ -6,11 +6,23 @@
 /*   By: tjolivea <tjolivea@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 15:50:54 by tjolivea          #+#    #+#             */
-/*   Updated: 2021/12/06 02:21:35 by tjolivea         ###   ########.fr       */
+/*   Updated: 2021/12/06 14:45:03 by tjolivea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	ft_exit(char *error_msg)
+{
+	if (!error_msg)
+		ft_putendl_fd("ERROR: No error message provided.", 2);
+	else
+	{
+		ft_putstr_fd("ERROR: ", 2);
+		ft_putendl_fd(error_msg, 2);
+	}
+	exit(1);
+}
 
 char	*get_cmd_path(char *cmd, char **env)
 {
@@ -57,23 +69,31 @@ void	exec_cmd(char *cmd, char **env)
 	}
 	ft_afree(cmd_argv);
 	ft_putstr_fd("ERROR: ", 2);
-	ft_putstr_fd("Command not found: ", 2);
-	ft_putendl_fd(cmd, 2);
+	ft_putstr_fd("Path to executable not found for command: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putendl_fd(".", 2);
 	exit(1);
 }
 
 void	exec_child(int file_in, char *cmd, char **env)
 {
 	pid_t	pid;
+	int		exit_code;
 	int		files[2];
 
-	pipe(files);
+	if (pipe(files) < 0)
+		ft_exit("Pipe error.");
 	pid = fork();
+	if (pid < 0)
+		ft_exit("Fork error.");
 	if (pid)
 	{
 		close(files[1]);
 		dup2(files[0], STDIN_FILENO);
-		waitpid(pid, NULL, 0);
+		if (waitpid(pid, &exit_code, 0) < 0)
+			ft_exit("Childen waitpid failed.");
+		if (exit_code != 0)
+			exit(exit_code);
 		return ;
 	}
 	close(files[0]);
@@ -89,23 +109,17 @@ int	main(int argc, char **argv, char **env)
 	int	file_out;
 	int	i;
 
-	if (argc == 5)
-	{
-		file_in = open(argv[1], O_RDONLY);
-		file_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_TRUNC, 0777);
-		if (file_in < 0 || file_out < 0)
-		{
-			ft_putendl_fd("ERROR: File open failed.", 2);
-			return (0);
-		}
-		dup2(file_in, STDIN_FILENO);
-		dup2(file_out, STDOUT_FILENO);
-		i = 1;
-		while (++i < argc - 2)
-			exec_child(file_in, argv[i], env);
-		exec_cmd(argv[argc - 2], env);
-	}
-	else
-		ft_putendl_fd("ERROR: Usage: ./pipex file_in cmd1 cmd2 file_out.", 2);
+	if (argc != 5)
+		ft_exit("Usage: ./pipex file_in cmd1 cmd2 file_out.");
+	file_in = open(argv[1], O_RDONLY);
+	file_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_TRUNC, 0777);
+	if (file_in < 0 || file_out < 0)
+		ft_exit("Couldn't open file");
+	dup2(file_in, STDIN_FILENO);
+	dup2(file_out, STDOUT_FILENO);
+	i = 1;
+	while (++i < argc - 2)
+		exec_child(file_in, argv[i], env);
+	exec_cmd(argv[argc - 2], env);
 	return (0);
 }
