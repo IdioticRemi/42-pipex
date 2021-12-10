@@ -6,7 +6,7 @@
 /*   By: tjolivea <tjolivea@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 15:50:54 by tjolivea          #+#    #+#             */
-/*   Updated: 2021/12/07 11:32:57 by tjolivea         ###   ########.fr       */
+/*   Updated: 2021/12/10 11:56:56 by tjolivea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ void	exec_cmd(char *cmd, char **env)
 void	exec_child(int file_in, char *cmd, char **env)
 {
 	pid_t	pid;
-	int		exit_code;
 	int		files[2];
 
 	if (pipe(files) < 0)
@@ -90,10 +89,6 @@ void	exec_child(int file_in, char *cmd, char **env)
 	{
 		close(files[1]);
 		dup2(files[0], STDIN_FILENO);
-		if (waitpid(pid, &exit_code, 0) < 0)
-			ft_exit("Childen waitpid failed.");
-		if (exit_code != 0)
-			exit(exit_code);
 		return ;
 	}
 	close(files[0]);
