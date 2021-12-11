@@ -16,8 +16,7 @@ UNAME	= $(shell uname)
 
 ifeq ($(UNAME), Linux)
 CC		= clang-13
-endif
-ifeq ($(UNAME), Darwin)
+else
 CC		= clang
 endif
 
