@@ -6,7 +6,7 @@
 /*   By: tjolivea <tjolivea@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 15:50:54 by tjolivea          #+#    #+#             */
-/*   Updated: 2021/12/10 11:57:06 by tjolivea         ###   ########.fr       */
+/*   Updated: 2021/12/10 16:54:37 by tjolivea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	exec_cmd(char *cmd, char **env)
 	exit(1);
 }
 
-void	exec_child(int file_in, char *cmd, char **env)
+pid_t	exec_child(int last, char *cmd, char **env)
 {
 	pid_t	pid;
 	int		files[2];
@@ -88,22 +88,26 @@ void	exec_child(int file_in, char *cmd, char **env)
 	if (pid)
 	{
 		close(files[1]);
-		dup2(files[0], STDIN_FILENO);
-		return ;
+		if (!last)
+			dup2(files[0], STDIN_FILENO);
+		return (pid);
 	}
 	close(files[0]);
-	dup2(files[1], STDOUT_FILENO);
-	if (file_in == STDIN_FILENO)
-		exit(1);
+	if (!last)
+		dup2(files[1], STDOUT_FILENO);
 	exec_cmd(cmd, env);
+	return (pid);
 }
 
 int	main(int argc, char **argv, char **env)
 {
+	int	*pids;
 	int	file_in;
 	int	file_out;
+	int	stat;
 	int	i;
 
+	pids = malloc((argc - 3) * sizeof(int));
 	if (argc != 5)
 		ft_exit("Usage: ./pipex file_in cmd_1 cmd_2 file_out.");
 	file_in = open(argv[1], O_RDONLY);
@@ -115,8 +119,11 @@ int	main(int argc, char **argv, char **env)
 	dup2(file_in, STDIN_FILENO);
 	dup2(file_out, STDOUT_FILENO);
 	i = 1;
-	while (++i < argc - 2)
-		exec_child(file_in, argv[i], env);
-	exec_cmd(argv[argc - 2], env);
-	return (0);
+	while (++i <= argc - 2)
+		pids[i - 2] = exec_child(i == argc - 2, argv[i], env);
+	i = 1;
+	while (++i <= argc - 2)
+		waitpid(pids[i - 2], &stat, 0);
+	free(pids);
+	exit (WEXITSTATUS(stat));
 }

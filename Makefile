@@ -12,7 +12,15 @@ BSRCS	= $(addprefix src/, $(_BSRC))
 BOBJS	= $(BSRCS:.c=.o)
 
 # COMPILER
+UNAME	= $(shell uname)
+
+ifeq ($(UNAME), Linux)
 CC		= clang-13
+endif
+ifeq ($(UNAME), Darwin)
+CC		= clang
+endif
+
 CFLAGS	= -Wall -Wextra -Werror
 
 INCL	= -I ./includes -I ./lib/libft
