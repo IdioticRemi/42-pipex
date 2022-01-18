@@ -38,7 +38,7 @@ C_FCLEA	= $(FG_WHIT)[ PIPEX ]$(FG_WHIT) $(FG_MAGE)Library was cleaned.\n$(FG_WHI
 log:
 	@printf "$(C_BUILD)"
 
-$(NAME): log $(OBJS) $(BOBJS)
+$(NAME): $(OBJS) $(BOBJS)
 	@printf " [$(words $(OBJS) $(BOBJS))]\n"
 	@make -s -C ./lib/libft all
 	@$(CC) $(CFLAGS) -o $(NAME) $(INCL) $(OBJS) $(LIBS)
@@ -46,7 +46,7 @@ $(NAME): log $(OBJS) $(BOBJS)
 	@$(CC) $(CFLAGS) -o $(NAME)_bonus $(INCL) $(BOBJS) $(LIBS)
 	@printf "$(C_AR_B)"
 
-all: $(NAME)
+all: log $(NAME)
 
 clean:
 	@make -s -C ./lib/libft clean
